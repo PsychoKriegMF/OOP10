@@ -1,28 +1,10 @@
 ﻿#include <iostream>
 #include <vector>
-
+#include <chrono>
 
 // Создание шаблонного связного списка
 
 //
-template <typename Type>
-class LinkedList;
-
-
-int main() {
-	setlocale(LC_ALL, "ru");
-
-	int arr[10];
-	std::vector<int> vec(10);
-	LinkedList<int
-	> list;
-	arr[5] = 34;
-	vec[5] = 23;
-	list[5] = 12;
-
-	return 0;
-}
-
 template <typename Type>
 class LinkedList {
 public:
@@ -157,19 +139,106 @@ public:
 		return tmp->Data();
 	}
 
-	Type& at(int i);
-	const Type& at(int i)const;
+	Type& at(int i)
+	{
+		if (i < 0 || i >= size_) throw - 1;
+		int count{};
+		Node* tmp = start_;
+		while (count < i)
+		{
+			tmp = tmp->Next();
+			count += 1;
+		}
+		return tmp->Data();
+	}
+	const Type& at(int i)const
+	{
+		if (i < 0 || i >= size_) throw - 1;
+		int count{};
+		Node* tmp = start_;
+		while (count < i)
+		{
+			tmp = tmp->Next();
+			count += 1;
+		}
+		return tmp->Data();
+	}
 
-	void push_back(const Type& obj); // вставить элемент в конец 
-	void push_front(const Type& obj); // вставить элемент в начало
-
-	void pop_back(); // уничтожить данные в конце списка
-	void pop_front();// уничтожить данные в начале списка
+	// вставить элемент в конец 
+	void push_back(const Type& obj) 
+	{
+		Node* tmp = new Node{obj};
+		if (size_ == 0)
+		{
+			start_ = tmp;
+			end_ = tmp;
+		}
+		else
+		{
+			end_->Next(tmp);
+			end_ = tmp;
+		}
+		size_ += 1;
+	}
+	// вставить элемент в начало
+	void push_front(const Type& obj) 
+	{
+		Node* tmp = new Node{ obj };
+		if (size_ == 0)
+		{
+			start_ = tmp;
+			end_ = tmp;
+		}
+		else
+		{
+			tmp->Next(start_); 
+			start_ = tmp;
+		}
+		size_ += 1;
+	}
+	// уничтожить данные в конце списка
+	void pop_back()
+	{
+		if (end_)
+		{
+			auto tmp = start_;
+			//цикл поиска предполеднего элемента
+			while (tmp->Next() != end_)
+			{
+				tmp = tmp->Next();
+			}
+			//освобождение и замена последнего элемента
+			delete end_;
+			end_ = tmp;
+			size_--;
+		}
+		if (!size_)
+		{
+			end_ = start_ = nullptr;
+		}
+	}
+	// уничтожить данные в начале списка
+	void pop_front()
+	{
+		if (start_)
+		{
+			auto tmp = start_;
+			start_ = start_->Next();
+			delete tmp;
+			size_--;
+		}
+		if (!size_)
+		{
+			end_ = start_ = nullptr;
+		}
+	}
 
 	//emplace/inesrt - методы добавления новых данных в произвольное место коллекции
 	//erise - метод для удаления данных в произвольной точке коллекции
 
-	int size()const;
+	int size()const {
+		return size_;
+	}
 
 	//методы для прохода по коллекции умными указателями мы пока сознательно опустим
 
@@ -213,3 +282,45 @@ private:
 	
 
 };
+
+
+int main() {
+	setlocale(LC_ALL, "ru");
+
+	int arr[10]{};
+	std::vector<int> vec(10);
+	LinkedList<int> list(10);
+	arr;
+	for (size_t i = 0; i < 100000; ++i)
+	{
+		vec.push_back(i + 1);
+	}
+	arr;
+	for (size_t i = 0; i < 100000; ++i)
+	{
+		list.push_back(i + 1); 
+	}
+	arr;
+	for (size_t i = 0; i < vec.size(); ++i)
+	{
+		vec[i];
+	}
+	arr;
+	for (size_t i = 0; i < list.size(); ++i) 
+	{
+		list[i];
+	}
+	arr;
+
+	//for (/*переменная для хранения элементов*/:/*коллекция элементов которую нужно перебрать*/) {
+
+	//}
+
+	/*for (auto &e : vec) {
+		std::cout << e << ' ';
+	}*/
+
+	//std::chrono::duration<float>time_length;
+
+	return 0;
+}
